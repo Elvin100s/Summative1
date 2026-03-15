@@ -74,18 +74,31 @@ if __name__ == '__main__':
         for i, f in enumerate(features, 1):
             print(f'  {i:2}. {f}')
 
-    # ── Sample input: one row of realistic feature values ──────────────────
-    # Replace these values with any actual row from your test dataset.
-    # The values below are example medians typical of the dataset.
-    # Order must match features listed above (feature_names.pkl).
-    sample_input = np.zeros(scaler.n_features_in_)   # zeros as placeholder
+    # ── Sample input: first row from the saved test set ────────────────────
+    X_TEST_PATH = 'X_test.pkl'
+    Y_TEST_PATH = 'y_test.pkl'
 
-    print(f'\nSample input (replace with real test row):')
+    if os.path.exists(X_TEST_PATH) and os.path.exists(Y_TEST_PATH):
+        X_test = joblib.load(X_TEST_PATH)
+        y_test = joblib.load(Y_TEST_PATH)
+        sample_input = X_test[0]          # first row of actual test data
+        actual_value = float(np.expm1(y_test[0]))
+        print(f'\nUsing row 0 from the saved test set ({X_test.shape[0]} rows total).')
+    else:
+        print('\n⚠️  X_test.pkl not found — run multivariate.ipynb first.')
+        print('   Falling back to zero-vector (results will not be meaningful).')
+        sample_input = np.zeros(scaler.n_features_in_)
+        actual_value = None
+
+    print(f'Sample input features:')
     print(f'  {np.round(sample_input, 4)}')
 
     prediction = predict_malaria_incidence(sample_input)
 
-    print(f'\n✅ Predicted malaria incidence : {prediction:.2f} per 1,000 pop at risk')
+    print(f'\n✅ Predicted malaria incidence : {prediction:>10.2f}  per 1,000 pop at risk')
+    if actual_value is not None:
+        print(f'   Actual  malaria incidence : {actual_value:>10.2f}  per 1,000 pop at risk')
+        print(f'   Absolute error            : {abs(prediction - actual_value):>10.2f}')
     print('━' * 62)
     print('\nTo use with your own data:')
     print('  from predict import predict_malaria_incidence')
