@@ -113,23 +113,34 @@ def _train_and_save(df: pd.DataFrame) -> dict:
     return {name: {"mse": v["mse"]} for name, v in results.items()}
 
 
+LOCAL_CSV = os.path.join(BASE_DIR, "..", "linear_regression", "DatasetAfricaMalaria.csv")
+
+
 def _ensure_model():
-    """Download dataset from Kaggle and train if pkl files are missing."""
+    """Train model from local CSV (or Kaggle fallback) if pkl files are missing."""
     if all(os.path.exists(p) for p in [MODEL_PATH, SCALER_PATH, FEATURES_PATH]):
         log.info("Model artifacts found — skipping training.")
         return
 
-    log.info("Model artifacts not found — downloading dataset and training…")
-    try:
-        import kagglehub
-        path = kagglehub.dataset_download("lydia70/malaria-in-africa")
-        csv_files = [f for f in os.listdir(path) if f.endswith(".csv")]
-        if not csv_files:
-            raise FileNotFoundError("No CSV found in Kaggle download.")
-        df = pd.read_csv(os.path.join(path, csv_files[0]))
-    except Exception as exc:
-        log.error(f"Could not download dataset: {exc}")
-        raise RuntimeError("Model not available and dataset download failed.") from exc
+    log.info("Model artifacts not found — training…")
+
+    # Try local CSV first
+    if os.path.exists(LOCAL_CSV):
+        log.info(f"Using local dataset: {LOCAL_CSV}")
+        df = pd.read_csv(LOCAL_CSV)
+    else:
+        # Fallback: download from Kaggle
+        log.info("Local CSV not found — downloading from Kaggle…")
+        try:
+            import kagglehub
+            path = kagglehub.dataset_download("lydia70/malaria-in-africa")
+            csv_files = [f for f in os.listdir(path) if f.endswith(".csv")]
+            if not csv_files:
+                raise FileNotFoundError("No CSV found in Kaggle download.")
+            df = pd.read_csv(os.path.join(path, csv_files[0]))
+        except Exception as exc:
+            log.error(f"Could not download dataset: {exc}")
+            raise RuntimeError("Model not available and dataset download failed.") from exc
 
     _train_and_save(df)
     log.info("Training complete.")
