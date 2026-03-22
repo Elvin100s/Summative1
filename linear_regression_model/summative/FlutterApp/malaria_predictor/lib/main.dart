@@ -18,13 +18,7 @@ class MalariaApp extends StatelessWidget {
           brightness: Brightness.light,
         ),
         useMaterial3: true,
-        inputDecorationTheme: InputDecorationTheme(
-          filled: true,
-          fillColor: Colors.grey.shade100,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        ),
+        fontFamily: 'Roboto',
       ),
       home: const PredictionPage(),
     );
@@ -32,12 +26,13 @@ class MalariaApp extends StatelessWidget {
 }
 
 // ---------------------------------------------------------------------------
-// Model for each input field
+// Field model
 // ---------------------------------------------------------------------------
 class _Field {
   final String key;
   final String label;
   final String hint;
+  final IconData icon;
   final double min;
   final double max;
   final TextEditingController controller = TextEditingController();
@@ -46,6 +41,7 @@ class _Field {
     required this.key,
     required this.label,
     required this.hint,
+    required this.icon,
     required this.min,
     required this.max,
   });
@@ -62,63 +58,72 @@ class PredictionPage extends StatefulWidget {
 }
 
 class _PredictionPageState extends State<PredictionPage> {
-  // Replace with your deployed Render URL once live
   static const String _apiUrl =
       'https://malaria-predictor-api.onrender.com/predict';
 
   final _formKey = GlobalKey<FormState>();
   bool _loading = false;
-  String? _result;
+  double? _resultValue;
   String? _error;
 
-  // 26 fields matching the API Pydantic model
   final List<_Field> _fields = [
-    _Field(key: 'country_name',               label: 'Country Name (encoded)',           hint: '0 – 53',    min: 0,    max: 53),
-    _Field(key: 'year',                        label: 'Year',                             hint: '2007–2017', min: 2007, max: 2017),
-    _Field(key: 'country_code',                label: 'Country Code (encoded)',           hint: '0 – 53',    min: 0,    max: 53),
-    _Field(key: 'malaria_cases_reported',      label: 'Malaria Cases Reported',           hint: '≥ 0',       min: 0,    max: 20000000),
-    _Field(key: 'bed_nets_pct',                label: 'Bed Net Usage (% under-5)',        hint: '0 – 100',   min: 0,    max: 100),
-    _Field(key: 'fever_antimalarial_pct',      label: 'Fever Antimalarial Treatment (%)', hint: '0 – 100',   min: 0,    max: 100),
-    _Field(key: 'ipt_pregnancy_pct',           label: 'IPT in Pregnancy (%)',             hint: '0 – 100',   min: 0,    max: 100),
-    _Field(key: 'safe_water_total_pct',        label: 'Safe Water – Total (%)',           hint: '0 – 100',   min: 0,    max: 100),
-    _Field(key: 'safe_water_rural_pct',        label: 'Safe Water – Rural (%)',           hint: '0 – 100',   min: 0,    max: 100),
-    _Field(key: 'safe_water_urban_pct',        label: 'Safe Water – Urban (%)',           hint: '0 – 100',   min: 0,    max: 100),
-    _Field(key: 'safe_sanitation_total_pct',   label: 'Safe Sanitation – Total (%)',      hint: '0 – 100',   min: 0,    max: 100),
-    _Field(key: 'safe_sanitation_rural_pct',   label: 'Safe Sanitation – Rural (%)',      hint: '0 – 100',   min: 0,    max: 100),
-    _Field(key: 'safe_sanitation_urban_pct',   label: 'Safe Sanitation – Urban (%)',      hint: '0 – 100',   min: 0,    max: 100),
-    _Field(key: 'rural_population_pct',        label: 'Rural Population (%)',             hint: '0 – 100',   min: 0,    max: 100),
-    _Field(key: 'rural_population_growth',     label: 'Rural Population Growth (%/yr)',   hint: '-10 – 10',  min: -10,  max: 10),
-    _Field(key: 'urban_population_pct',        label: 'Urban Population (%)',             hint: '0 – 100',   min: 0,    max: 100),
-    _Field(key: 'urban_population_growth',     label: 'Urban Population Growth (%/yr)',   hint: '-10 – 10',  min: -10,  max: 10),
-    _Field(key: 'basic_water_total_pct',       label: 'Basic Water – Total (%)',          hint: '0 – 100',   min: 0,    max: 100),
-    _Field(key: 'basic_water_rural_pct',       label: 'Basic Water – Rural (%)',          hint: '0 – 100',   min: 0,    max: 100),
-    _Field(key: 'basic_water_urban_pct',       label: 'Basic Water – Urban (%)',          hint: '0 – 100',   min: 0,    max: 100),
-    _Field(key: 'basic_sanitation_total_pct',  label: 'Basic Sanitation – Total (%)',     hint: '0 – 100',   min: 0,    max: 100),
-    _Field(key: 'basic_sanitation_rural_pct',  label: 'Basic Sanitation – Rural (%)',     hint: '0 – 100',   min: 0,    max: 100),
-    _Field(key: 'basic_sanitation_urban_pct',  label: 'Basic Sanitation – Urban (%)',     hint: '0 – 100',   min: 0,    max: 100),
-    _Field(key: 'latitude',                    label: 'Latitude',                         hint: '-35 – 38',  min: -35,  max: 38),
-    _Field(key: 'longitude',                   label: 'Longitude',                        hint: '-18 – 52',  min: -18,  max: 52),
-    _Field(key: 'geometry',                    label: 'Geometry (encoded)',               hint: '0 – 53',    min: 0,    max: 53),
+    _Field(key: 'country_name',               label: 'Country Name (encoded)',            hint: '0 – 53',    icon: Icons.flag,               min: 0,    max: 53),
+    _Field(key: 'year',                        label: 'Year',                              hint: '2007–2017', icon: Icons.calendar_today,     min: 2007, max: 2017),
+    _Field(key: 'country_code',                label: 'Country Code (encoded)',            hint: '0 – 53',    icon: Icons.tag,                min: 0,    max: 53),
+    _Field(key: 'malaria_cases_reported',      label: 'Malaria Cases Reported',            hint: '≥ 0',       icon: Icons.sick,               min: 0,    max: 20000000),
+    _Field(key: 'bed_nets_pct',                label: 'Bed Net Usage (% under-5)',         hint: '0 – 100',   icon: Icons.bed,                min: 0,    max: 100),
+    _Field(key: 'fever_antimalarial_pct',      label: 'Fever Antimalarial Treatment (%)',  hint: '0 – 100',   icon: Icons.medication,         min: 0,    max: 100),
+    _Field(key: 'ipt_pregnancy_pct',           label: 'IPT in Pregnancy (%)',              hint: '0 – 100',   icon: Icons.pregnant_woman,     min: 0,    max: 100),
+    _Field(key: 'safe_water_total_pct',        label: 'Safe Water – Total (%)',            hint: '0 – 100',   icon: Icons.water_drop,         min: 0,    max: 100),
+    _Field(key: 'safe_water_rural_pct',        label: 'Safe Water – Rural (%)',            hint: '0 – 100',   icon: Icons.water_drop,         min: 0,    max: 100),
+    _Field(key: 'safe_water_urban_pct',        label: 'Safe Water – Urban (%)',            hint: '0 – 100',   icon: Icons.water_drop,         min: 0,    max: 100),
+    _Field(key: 'safe_sanitation_total_pct',   label: 'Safe Sanitation – Total (%)',       hint: '0 – 100',   icon: Icons.clean_hands,        min: 0,    max: 100),
+    _Field(key: 'safe_sanitation_rural_pct',   label: 'Safe Sanitation – Rural (%)',       hint: '0 – 100',   icon: Icons.clean_hands,        min: 0,    max: 100),
+    _Field(key: 'safe_sanitation_urban_pct',   label: 'Safe Sanitation – Urban (%)',       hint: '0 – 100',   icon: Icons.clean_hands,        min: 0,    max: 100),
+    _Field(key: 'rural_population_pct',        label: 'Rural Population (%)',              hint: '0 – 100',   icon: Icons.nature_people,      min: 0,    max: 100),
+    _Field(key: 'rural_population_growth',     label: 'Rural Population Growth (%/yr)',    hint: '-10 – 10',  icon: Icons.trending_up,        min: -10,  max: 10),
+    _Field(key: 'urban_population_pct',        label: 'Urban Population (%)',              hint: '0 – 100',   icon: Icons.location_city,      min: 0,    max: 100),
+    _Field(key: 'urban_population_growth',     label: 'Urban Population Growth (%/yr)',    hint: '-10 – 10',  icon: Icons.trending_up,        min: -10,  max: 10),
+    _Field(key: 'basic_water_total_pct',       label: 'Basic Water – Total (%)',           hint: '0 – 100',   icon: Icons.opacity,            min: 0,    max: 100),
+    _Field(key: 'basic_water_rural_pct',       label: 'Basic Water – Rural (%)',           hint: '0 – 100',   icon: Icons.opacity,            min: 0,    max: 100),
+    _Field(key: 'basic_water_urban_pct',       label: 'Basic Water – Urban (%)',           hint: '0 – 100',   icon: Icons.opacity,            min: 0,    max: 100),
+    _Field(key: 'basic_sanitation_total_pct',  label: 'Basic Sanitation – Total (%)',      hint: '0 – 100',   icon: Icons.sanitizer,          min: 0,    max: 100),
+    _Field(key: 'basic_sanitation_rural_pct',  label: 'Basic Sanitation – Rural (%)',      hint: '0 – 100',   icon: Icons.sanitizer,          min: 0,    max: 100),
+    _Field(key: 'basic_sanitation_urban_pct',  label: 'Basic Sanitation – Urban (%)',      hint: '0 – 100',   icon: Icons.sanitizer,          min: 0,    max: 100),
+    _Field(key: 'latitude',                    label: 'Latitude',                          hint: '-35 – 38',  icon: Icons.explore,            min: -35,  max: 38),
+    _Field(key: 'longitude',                   label: 'Longitude',                         hint: '-18 – 52',  icon: Icons.explore,            min: -18,  max: 52),
+    _Field(key: 'geometry',                    label: 'Geometry (encoded)',                hint: '0 – 53',    icon: Icons.map,                min: 0,    max: 53),
   ];
 
-  // Section groupings: (title, startIndex, endIndex)
-  static const List<(String, int, int)> _sections = [
-    ('Country & Year',      0,  4),
-    ('Disease Indicators',  4,  7),
-    ('Water Services',      7,  10),
-    ('Sanitation Services', 10, 13),
-    ('Population',          13, 17),
-    ('Basic Water',         17, 20),
-    ('Basic Sanitation',    20, 23),
-    ('Geography',           23, 26),
+  static const List<(String, IconData, int, int)> _sections = [
+    ('Country & Year',      Icons.public,        0,  4),
+    ('Disease Indicators',  Icons.coronavirus,   4,  7),
+    ('Water Services',      Icons.water_drop,    7,  10),
+    ('Sanitation Services', Icons.clean_hands,   10, 13),
+    ('Population',          Icons.people,        13, 17),
+    ('Basic Water',         Icons.opacity,       17, 20),
+    ('Basic Sanitation',    Icons.sanitizer,     20, 23),
+    ('Geography',           Icons.map,           23, 26),
   ];
+
+  String _riskLabel(double value) {
+    if (value < 100) return 'Low Risk';
+    if (value < 300) return 'Moderate Risk';
+    return 'High Risk';
+  }
+
+  Color _riskColor(double value) {
+    if (value < 100) return const Color(0xFF2E7D32);
+    if (value < 300) return const Color(0xFFF57F17);
+    return const Color(0xFFC62828);
+  }
 
   Future<void> _predict() async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() {
       _loading = true;
-      _result = null;
+      _resultValue = null;
       _error = null;
     });
 
@@ -140,14 +145,13 @@ class _PredictionPageState extends State<PredictionPage> {
       final data = jsonDecode(response.body) as Map<String, dynamic>;
 
       if (response.statusCode == 200) {
-        final value = data['predicted_malaria_incidence_per_1000'] as num;
         setState(() {
-          _result =
-              '${value.toStringAsFixed(2)} cases per 1,000 population at risk';
+          _resultValue =
+              (data['predicted_malaria_incidence_per_1000'] as num).toDouble();
         });
       } else {
         setState(() {
-          _error = 'Error ${response.statusCode}: ${data['detail'] ?? response.body}';
+          _error = data['detail']?.toString() ?? 'Unknown error (${response.statusCode})';
         });
       }
     } catch (e) {
@@ -163,9 +167,7 @@ class _PredictionPageState extends State<PredictionPage> {
     if (value == null || value.trim().isEmpty) return 'Required';
     final num = double.tryParse(value.trim());
     if (num == null) return 'Enter a valid number';
-    if (num < f.min || num > f.max) {
-      return 'Must be between ${f.min} and ${f.max}';
-    }
+    if (num < f.min || num > f.max) return 'Must be ${f.min} – ${f.max}';
     return null;
   }
 
@@ -179,218 +181,353 @@ class _PredictionPageState extends State<PredictionPage> {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: scheme.primary,
-        foregroundColor: Colors.white,
-        title: const Text(
-          'Malaria Incidence Predictor',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF1B5E20), Color(0xFF388E3C)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
         ),
-        centerTitle: true,
-      ),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          children: [
-            // Mission banner
-            Container(
-              padding: const EdgeInsets.all(14),
-              margin: const EdgeInsets.only(bottom: 16),
-              decoration: BoxDecoration(
-                color: scheme.primaryContainer,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                'Predict malaria incidence rates (per 1,000 population at risk) '
-                'to guide health resource allocation in Rwanda, Uganda & Kenya.',
-                style: TextStyle(fontSize: 13, color: scheme.onPrimaryContainer),
-                textAlign: TextAlign.center,
-              ),
-            ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              _buildHeader(),
+              Expanded(
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFF5F5F5),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(28),
+                      topRight: Radius.circular(28),
+                    ),
+                  ),
+                  child: Form(
+                    key: _formKey,
+                    child: ListView(
+                      padding: const EdgeInsets.fromLTRB(16, 20, 16, 32),
+                      children: [
+                        // Result / Error cards (shown at top after prediction)
+                        if (_resultValue != null) ...[
+                          _buildResultCard(_resultValue!),
+                          const SizedBox(height: 16),
+                        ],
+                        if (_error != null) ...[
+                          _buildErrorCard(_error!),
+                          const SizedBox(height: 16),
+                        ],
 
-            // Input sections
-            for (final (title, start, end) in _sections) ...[
-              _SectionHeader(title: title),
-              const SizedBox(height: 8),
-              for (final f in _fields.sublist(start, end)) ...[
-                _InputField(
-                  field: f,
-                  validator: (v) => _validateField(f, v),
+                        // Input sections
+                        for (final (title, icon, start, end) in _sections) ...[
+                          _SectionCard(
+                            title: title,
+                            icon: icon,
+                            fields: _fields.sublist(start, end),
+                            validator: _validateField,
+                          ),
+                          const SizedBox(height: 12),
+                        ],
+
+                        const SizedBox(height: 8),
+                        _buildPredictButton(),
+                      ],
+                    ),
+                  ),
                 ),
-                const SizedBox(height: 10),
-              ],
-              const SizedBox(height: 6),
+              ),
             ],
-
-            const SizedBox(height: 8),
-
-            // Predict button
-            SizedBox(
-              width: double.infinity,
-              height: 52,
-              child: ElevatedButton.icon(
-                onPressed: _loading ? null : _predict,
-                icon: _loading
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                            strokeWidth: 2, color: Colors.white),
-                      )
-                    : const Icon(Icons.biotech),
-                label: Text(
-                  _loading ? 'Predicting…' : 'Predict',
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: scheme.primary,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            // Result / Error display
-            if (_result != null)
-              _ResultCard(
-                value: _result!,
-                isError: false,
-                color: scheme.primaryContainer,
-                textColor: scheme.onPrimaryContainer,
-              ),
-            if (_error != null)
-              _ResultCard(
-                value: _error!,
-                isError: true,
-                color: const Color(0xFFFFEBEE),
-                textColor: Colors.red.shade800,
-              ),
-
-            const SizedBox(height: 24),
-          ],
+          ),
         ),
       ),
     );
   }
-}
 
-// ---------------------------------------------------------------------------
-// Reusable widgets
-// ---------------------------------------------------------------------------
+  Widget _buildHeader() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+      child: Column(
+        children: [
+          const Icon(Icons.biotech, color: Colors.white, size: 40),
+          const SizedBox(height: 8),
+          const Text(
+            'Malaria Incidence Predictor',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 0.5,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'Rwanda · Uganda · Kenya',
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.8),
+              fontSize: 13,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
-class _SectionHeader extends StatelessWidget {
-  final String title;
-  const _SectionHeader({required this.title});
+  Widget _buildResultCard(double value) {
+    final color = _riskColor(value);
+    final label = _riskLabel(value);
 
-  @override
-  Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF1B5E20),
-        borderRadius: BorderRadius.circular(8),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: 0.2),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+        border: Border.all(color: color.withValues(alpha: 0.4), width: 1.5),
       ),
-      child: Text(
-        title,
-        style: const TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.w600,
-          fontSize: 14,
-          letterSpacing: 0.5,
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Icon(Icons.check_circle, color: color, size: 22),
+              const SizedBox(width: 8),
+              Text(
+                'Prediction Result',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                  color: color,
+                ),
+              ),
+              const Spacer(),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: color,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          Text(
+            value.toStringAsFixed(2),
+            style: TextStyle(
+              fontSize: 48,
+              fontWeight: FontWeight.bold,
+              color: color,
+              height: 1,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'cases per 1,000 population at risk',
+            style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildErrorCard(String error) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFEBEE),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.red.shade200),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.error_outline, color: Colors.red.shade700, size: 22),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              error,
+              style: TextStyle(color: Colors.red.shade800, fontSize: 13),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPredictButton() {
+    return Container(
+      width: double.infinity,
+      height: 56,
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF1B5E20), Color(0xFF388E3C)],
+        ),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF1B5E20).withValues(alpha: 0.4),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: ElevatedButton.icon(
+        onPressed: _loading ? null : _predict,
+        icon: _loading
+            ? const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                    strokeWidth: 2.5, color: Colors.white),
+              )
+            : const Icon(Icons.analytics, color: Colors.white),
+        label: Text(
+          _loading ? 'Predicting…' : 'Predict',
+          style: const TextStyle(
+            fontSize: 17,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+            letterSpacing: 0.5,
+          ),
+        ),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16)),
         ),
       ),
     );
   }
 }
 
-class _InputField extends StatelessWidget {
-  final _Field field;
-  final FormFieldValidator<String>? validator;
+// ---------------------------------------------------------------------------
+// Section Card
+// ---------------------------------------------------------------------------
+class _SectionCard extends StatelessWidget {
+  final String title;
+  final IconData icon;
+  final List<_Field> fields;
+  final String? Function(_Field, String?) validator;
 
-  const _InputField({required this.field, this.validator});
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      controller: field.controller,
-      keyboardType:
-          const TextInputType.numberWithOptions(signed: true, decimal: true),
-      decoration: InputDecoration(
-        labelText: field.label,
-        hintText: field.hint,
-        labelStyle: const TextStyle(fontSize: 13),
-      ),
-      style: const TextStyle(fontSize: 14),
-      validator: validator,
-    );
-  }
-}
-
-class _ResultCard extends StatelessWidget {
-  final String value;
-  final bool isError;
-  final Color color;
-  final Color textColor;
-
-  const _ResultCard({
-    required this.value,
-    required this.isError,
-    required this.color,
-    required this.textColor,
+  const _SectionCard({
+    required this.title,
+    required this.icon,
+    required this.fields,
+    required this.validator,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: textColor.withValues(alpha: 0.3)),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Icon(
-                isError ? Icons.error_outline : Icons.check_circle_outline,
-                color: textColor,
-                size: 20,
+          // Section header
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFF1B5E20), Color(0xFF2E7D32)],
               ),
-              const SizedBox(width: 8),
-              Text(
-                isError ? 'Prediction Error' : 'Prediction Result',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                  color: textColor,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(16),
+                topRight: Radius.circular(16),
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(icon, color: Colors.white, size: 18),
+                const SizedBox(width: 8),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    letterSpacing: 0.3,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-          const SizedBox(height: 10),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: isError ? 13 : 22,
-              fontWeight: isError ? FontWeight.normal : FontWeight.bold,
-              color: textColor,
+          // Fields
+          Padding(
+            padding: const EdgeInsets.fromLTRB(14, 14, 14, 10),
+            child: Column(
+              children: [
+                for (int i = 0; i < fields.length; i++) ...[
+                  _buildField(fields[i]),
+                  if (i < fields.length - 1) const SizedBox(height: 10),
+                ],
+              ],
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildField(_Field f) {
+    return TextFormField(
+      controller: f.controller,
+      keyboardType:
+          const TextInputType.numberWithOptions(signed: true, decimal: true),
+      decoration: InputDecoration(
+        labelText: f.label,
+        hintText: f.hint,
+        prefixIcon: Icon(f.icon, size: 18, color: const Color(0xFF388E3C)),
+        filled: true,
+        fillColor: const Color(0xFFF9FBF9),
+        labelStyle: const TextStyle(fontSize: 12.5, color: Colors.black54),
+        hintStyle: const TextStyle(fontSize: 12, color: Colors.black38),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: Colors.grey.shade300),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide:
+              const BorderSide(color: Color(0xFF388E3C), width: 1.5),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Colors.red),
+        ),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      ),
+      style: const TextStyle(fontSize: 14),
+      validator: (v) => validator(f, v),
     );
   }
 }
