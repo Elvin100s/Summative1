@@ -38,6 +38,22 @@ linear_regression_model/
     └── FlutterApp/
 ```
 
+## API
+
+- **Public API endpoint:** https://malaria-predictor-api.onrender.com/predict
+- **Swagger UI:** https://malaria-predictor-api.onrender.com/docs
+
+## Flutter App — How to Run
+
+1. Install Flutter: https://docs.flutter.dev/get-started/install
+2. Connect your Android phone via USB with USB Debugging enabled
+3. Run:
+```bash
+cd linear_regression_model/summative/FlutterApp/malaria_predictor
+flutter pub get
+flutter run
+```
+
 ## Setup
 
 ```bash
