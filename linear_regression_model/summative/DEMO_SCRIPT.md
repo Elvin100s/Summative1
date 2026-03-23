@@ -2,42 +2,94 @@
 
 ---
 
-## PART 1 — Flutter App on Phone (2 min)
+## PART 1 — Flutter App on Phone (2.5 min)
 
-**Show the app open on your phone.**
-
-Say:
-> "This is my Flutter mobile app — Malaria Incidence Predictor.
-> It predicts malaria incidence per 1,000 population at risk
-> for African countries based on 26 input variables."
-
-**Show the Country Preset dropdown.**
+**Hold up your phone to the camera so it's clearly visible.**
 
 Say:
-> "To make input easier, I added a country preset dropdown.
-> I'll select Rwanda, which auto-fills all 26 fields with
-> real values for Rwanda."
+> "This is my Flutter mobile app — the Malaria Incidence Predictor.
+> It's a native Android app built with Flutter.
+> The app connects to my deployed FastAPI backend to predict
+> malaria incidence per 1,000 population at risk."
 
-**Select Rwanda — fields fill automatically.**
-
-**Scroll through the sections briefly to show all fields.**
-
-Say:
-> "Each field has its label and valid range shown.
-> There are 26 fields matching exactly the 26 variables
-> the model was trained on."
-
-**Scroll to the bottom and tap Predict.**
+**Show the green header with the biotech icon and title.**
 
 Say:
-> "I'll hit Predict — the app sends a POST request to my API
-> and displays the result."
+> "The app has one page as required — a prediction page.
+> At the top you can see the app title and the three countries
+> this model focuses on — Rwanda, Uganda, and Kenya."
 
-**Show the result card.**
+**Show the Country Preset dropdown at the top of the form.**
 
 Say:
-> "The result shows the predicted incidence value and
-> a risk level — green for low, orange for moderate, red for high."
+> "I added a country preset dropdown to make it easy to input data.
+> Instead of manually typing all 26 values, I can select a country
+> and all fields are automatically filled with real values for that country."
+
+**Select Rwanda — show fields filling automatically.**
+
+Say:
+> "I'll select Rwanda — all 26 fields fill instantly with
+> real epidemiological data for Rwanda."
+
+**Slowly scroll down through each section card.**
+
+Say:
+> "The fields are organized into 8 sections —
+> Country and Year, Disease Indicators, Water Services,
+> Sanitation, Population, and Geography.
+> Each field shows its label and the valid input range
+> so the user always knows what values are acceptable."
+
+**Pause on the Disease Indicators section.**
+
+Say:
+> "For example — Bed Net Usage, Fever Antimalarial Treatment,
+> and IPT in Pregnancy are key malaria intervention indicators."
+
+**Continue scrolling to Geography section.**
+
+Say:
+> "Geography fields include latitude, longitude, and
+> an encoded geometry identifier — all derived from the dataset."
+
+**Scroll back to top and show the Predict button.**
+
+Say:
+> "At the bottom is the Predict button. I'll tap it now."
+
+**Tap Predict — wait for result.**
+
+Say:
+> "The app sends all 26 values as a POST request to my API
+> and waits for the response."
+
+**Show the result card at the top.**
+
+Say:
+> "The result card appears showing the predicted incidence value
+> and a color-coded risk level.
+> Green means low risk — under 100 cases per 1,000.
+> Orange is moderate — 100 to 300.
+> Red is high — above 300."
+
+**Now switch to Uganda preset.**
+
+Say:
+> "I'll now switch to Uganda to show a different prediction."
+
+**Select Uganda — tap Predict — show new result.**
+
+Say:
+> "Uganda has higher malaria burden — notice the different
+> predicted value and potentially different risk level."
+
+**Point to the Flutter code briefly if screen recording laptop.**
+
+Say:
+> "The API call is made here in the _predict function —
+> it sends a JSON POST request to the deployed Render URL
+> and parses the response to display the result."
 
 ---
 

@@ -308,20 +308,12 @@ class _PredictionPageState extends State<PredictionPage> {
                       topRight: Radius.circular(28),
                     ),
                   ),
+                  clipBehavior: Clip.antiAlias,
                   child: Form(
                     key: _formKey,
                     child: ListView(
                       padding: const EdgeInsets.fromLTRB(16, 20, 16, 32),
                       children: [
-                        if (_resultValue != null) ...[
-                          _buildResultCard(_resultValue!),
-                          const SizedBox(height: 16),
-                        ],
-                        if (_error != null) ...[
-                          _buildErrorCard(_error!),
-                          const SizedBox(height: 16),
-                        ],
-
                         _buildCountrySelector(),
                         const SizedBox(height: 12),
 
@@ -337,6 +329,16 @@ class _PredictionPageState extends State<PredictionPage> {
 
                         const SizedBox(height: 8),
                         _buildPredictButton(),
+                        const SizedBox(height: 16),
+
+                        if (_resultValue != null) ...[
+                          _buildResultCard(_resultValue!),
+                          const SizedBox(height: 16),
+                        ],
+                        if (_error != null) ...[
+                          _buildErrorCard(_error!),
+                          const SizedBox(height: 16),
+                        ],
                       ],
                     ),
                   ),
