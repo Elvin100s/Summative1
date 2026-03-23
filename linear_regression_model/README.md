@@ -1,7 +1,7 @@
 # Malaria Incidence Prediction in Africa
 
 ## Mission
-Combating infectious diseases in Rwanda, Uganda, and Kenya by predicting malaria incidence rates using machine learning to guide health resource allocation and reduce preventable deaths.
+Combating infectious diseases in East and Central Africa by predicting malaria incidence rates using machine learning to guide health resource allocation and reduce preventable deaths.
 
 **Dataset:** Malaria in Africa (lydia70, Kaggle / World Bank Open Data) — 54 African countries, 2007–2017
 **Dataset size:** 594 rows × 27 features — epidemiological, demographic, and health intervention variables (bed net usage, fever treatment rates, antenatal care, reported cases, sanitation, water access, and more) across 54 countries over 10 years.
