@@ -26,12 +26,102 @@ class MalariaApp extends StatelessWidget {
 }
 
 // ---------------------------------------------------------------------------
+// Country presets
+// ---------------------------------------------------------------------------
+const Map<String, Map<String, String>> _countryPresets = {
+  'Rwanda': {
+    'country_name': '40',
+    'year': '2015',
+    'country_code': '40',
+    'malaria_cases_reported': '3500000',
+    'bed_nets_pct': '53.0',
+    'fever_antimalarial_pct': '38.0',
+    'ipt_pregnancy_pct': '31.0',
+    'safe_water_total_pct': '14.0',
+    'safe_water_rural_pct': '8.0',
+    'safe_water_urban_pct': '42.0',
+    'safe_sanitation_total_pct': '6.0',
+    'safe_sanitation_rural_pct': '4.0',
+    'safe_sanitation_urban_pct': '20.0',
+    'rural_population_pct': '83.0',
+    'rural_population_growth': '2.1',
+    'urban_population_pct': '17.0',
+    'urban_population_growth': '6.5',
+    'basic_water_total_pct': '76.0',
+    'basic_water_rural_pct': '70.0',
+    'basic_water_urban_pct': '93.0',
+    'basic_sanitation_total_pct': '49.0',
+    'basic_sanitation_rural_pct': '44.0',
+    'basic_sanitation_urban_pct': '72.0',
+    'latitude': '-1.94',
+    'longitude': '29.87',
+    'geometry': '40',
+  },
+  'Uganda': {
+    'country_name': '48',
+    'year': '2015',
+    'country_code': '48',
+    'malaria_cases_reported': '9800000',
+    'bed_nets_pct': '42.0',
+    'fever_antimalarial_pct': '55.0',
+    'ipt_pregnancy_pct': '20.0',
+    'safe_water_total_pct': '8.0',
+    'safe_water_rural_pct': '4.0',
+    'safe_water_urban_pct': '28.0',
+    'safe_sanitation_total_pct': '5.0',
+    'safe_sanitation_rural_pct': '3.0',
+    'safe_sanitation_urban_pct': '15.0',
+    'rural_population_pct': '84.0',
+    'rural_population_growth': '3.2',
+    'urban_population_pct': '16.0',
+    'urban_population_growth': '5.8',
+    'basic_water_total_pct': '55.0',
+    'basic_water_rural_pct': '48.0',
+    'basic_water_urban_pct': '88.0',
+    'basic_sanitation_total_pct': '19.0',
+    'basic_sanitation_rural_pct': '14.0',
+    'basic_sanitation_urban_pct': '50.0',
+    'latitude': '1.37',
+    'longitude': '32.29',
+    'geometry': '48',
+  },
+  'Kenya': {
+    'country_name': '22',
+    'year': '2015',
+    'country_code': '22',
+    'malaria_cases_reported': '6500000',
+    'bed_nets_pct': '47.0',
+    'fever_antimalarial_pct': '30.0',
+    'ipt_pregnancy_pct': '43.0',
+    'safe_water_total_pct': '22.0',
+    'safe_water_rural_pct': '12.0',
+    'safe_water_urban_pct': '45.0',
+    'safe_sanitation_total_pct': '10.0',
+    'safe_sanitation_rural_pct': '6.0',
+    'safe_sanitation_urban_pct': '25.0',
+    'rural_population_pct': '74.0',
+    'rural_population_growth': '2.4',
+    'urban_population_pct': '26.0',
+    'urban_population_growth': '4.2',
+    'basic_water_total_pct': '63.0',
+    'basic_water_rural_pct': '53.0',
+    'basic_water_urban_pct': '85.0',
+    'basic_sanitation_total_pct': '30.0',
+    'basic_sanitation_rural_pct': '22.0',
+    'basic_sanitation_urban_pct': '55.0',
+    'latitude': '-0.02',
+    'longitude': '37.91',
+    'geometry': '22',
+  },
+};
+
+// ---------------------------------------------------------------------------
 // Field model
 // ---------------------------------------------------------------------------
 class _Field {
   final String key;
   final String label;
-  final String hint;
+  final String rangeLabel;
   final IconData icon;
   final double min;
   final double max;
@@ -40,7 +130,7 @@ class _Field {
   _Field({
     required this.key,
     required this.label,
-    required this.hint,
+    required this.rangeLabel,
     required this.icon,
     required this.min,
     required this.max,
@@ -65,34 +155,35 @@ class _PredictionPageState extends State<PredictionPage> {
   bool _loading = false;
   double? _resultValue;
   String? _error;
+  String _selectedCountry = 'Rwanda';
 
   final List<_Field> _fields = [
-    _Field(key: 'country_name',               label: 'Country Name (encoded)',            hint: '0 – 53',    icon: Icons.flag,               min: 0,    max: 53),
-    _Field(key: 'year',                        label: 'Year',                              hint: '2007–2017', icon: Icons.calendar_today,     min: 2007, max: 2017),
-    _Field(key: 'country_code',                label: 'Country Code (encoded)',            hint: '0 – 53',    icon: Icons.tag,                min: 0,    max: 53),
-    _Field(key: 'malaria_cases_reported',      label: 'Malaria Cases Reported',            hint: '≥ 0',       icon: Icons.sick,               min: 0,    max: 20000000),
-    _Field(key: 'bed_nets_pct',                label: 'Bed Net Usage (% under-5)',         hint: '0 – 100',   icon: Icons.bed,                min: 0,    max: 100),
-    _Field(key: 'fever_antimalarial_pct',      label: 'Fever Antimalarial Treatment (%)',  hint: '0 – 100',   icon: Icons.medication,         min: 0,    max: 100),
-    _Field(key: 'ipt_pregnancy_pct',           label: 'IPT in Pregnancy (%)',              hint: '0 – 100',   icon: Icons.pregnant_woman,     min: 0,    max: 100),
-    _Field(key: 'safe_water_total_pct',        label: 'Safe Water – Total (%)',            hint: '0 – 100',   icon: Icons.water_drop,         min: 0,    max: 100),
-    _Field(key: 'safe_water_rural_pct',        label: 'Safe Water – Rural (%)',            hint: '0 – 100',   icon: Icons.water_drop,         min: 0,    max: 100),
-    _Field(key: 'safe_water_urban_pct',        label: 'Safe Water – Urban (%)',            hint: '0 – 100',   icon: Icons.water_drop,         min: 0,    max: 100),
-    _Field(key: 'safe_sanitation_total_pct',   label: 'Safe Sanitation – Total (%)',       hint: '0 – 100',   icon: Icons.clean_hands,        min: 0,    max: 100),
-    _Field(key: 'safe_sanitation_rural_pct',   label: 'Safe Sanitation – Rural (%)',       hint: '0 – 100',   icon: Icons.clean_hands,        min: 0,    max: 100),
-    _Field(key: 'safe_sanitation_urban_pct',   label: 'Safe Sanitation – Urban (%)',       hint: '0 – 100',   icon: Icons.clean_hands,        min: 0,    max: 100),
-    _Field(key: 'rural_population_pct',        label: 'Rural Population (%)',              hint: '0 – 100',   icon: Icons.nature_people,      min: 0,    max: 100),
-    _Field(key: 'rural_population_growth',     label: 'Rural Population Growth (%/yr)',    hint: '-10 – 10',  icon: Icons.trending_up,        min: -10,  max: 10),
-    _Field(key: 'urban_population_pct',        label: 'Urban Population (%)',              hint: '0 – 100',   icon: Icons.location_city,      min: 0,    max: 100),
-    _Field(key: 'urban_population_growth',     label: 'Urban Population Growth (%/yr)',    hint: '-10 – 10',  icon: Icons.trending_up,        min: -10,  max: 10),
-    _Field(key: 'basic_water_total_pct',       label: 'Basic Water – Total (%)',           hint: '0 – 100',   icon: Icons.opacity,            min: 0,    max: 100),
-    _Field(key: 'basic_water_rural_pct',       label: 'Basic Water – Rural (%)',           hint: '0 – 100',   icon: Icons.opacity,            min: 0,    max: 100),
-    _Field(key: 'basic_water_urban_pct',       label: 'Basic Water – Urban (%)',           hint: '0 – 100',   icon: Icons.opacity,            min: 0,    max: 100),
-    _Field(key: 'basic_sanitation_total_pct',  label: 'Basic Sanitation – Total (%)',      hint: '0 – 100',   icon: Icons.sanitizer,          min: 0,    max: 100),
-    _Field(key: 'basic_sanitation_rural_pct',  label: 'Basic Sanitation – Rural (%)',      hint: '0 – 100',   icon: Icons.sanitizer,          min: 0,    max: 100),
-    _Field(key: 'basic_sanitation_urban_pct',  label: 'Basic Sanitation – Urban (%)',      hint: '0 – 100',   icon: Icons.sanitizer,          min: 0,    max: 100),
-    _Field(key: 'latitude',                    label: 'Latitude',                          hint: '-35 – 38',  icon: Icons.explore,            min: -35,  max: 38),
-    _Field(key: 'longitude',                   label: 'Longitude',                         hint: '-18 – 52',  icon: Icons.explore,            min: -18,  max: 52),
-    _Field(key: 'geometry',                    label: 'Geometry (encoded)',                hint: '0 – 53',    icon: Icons.map,                min: 0,    max: 53),
+    _Field(key: 'country_name',               label: 'Country Name (encoded) [0–53]',           rangeLabel: '0–53',    icon: Icons.flag,               min: 0,    max: 53),
+    _Field(key: 'year',                        label: 'Year [2007–2017]',                         rangeLabel: '2007–2017', icon: Icons.calendar_today,   min: 2007, max: 2017),
+    _Field(key: 'country_code',                label: 'Country Code (encoded) [0–53]',            rangeLabel: '0–53',    icon: Icons.tag,                min: 0,    max: 53),
+    _Field(key: 'malaria_cases_reported',      label: 'Malaria Cases Reported [≥0]',              rangeLabel: '≥0',      icon: Icons.sick,               min: 0,    max: 20000000),
+    _Field(key: 'bed_nets_pct',                label: 'Bed Net Usage % under-5 [0–100]',          rangeLabel: '0–100',   icon: Icons.bed,                min: 0,    max: 100),
+    _Field(key: 'fever_antimalarial_pct',      label: 'Fever Antimalarial Treatment % [0–100]',   rangeLabel: '0–100',   icon: Icons.medication,         min: 0,    max: 100),
+    _Field(key: 'ipt_pregnancy_pct',           label: 'IPT in Pregnancy % [0–100]',               rangeLabel: '0–100',   icon: Icons.pregnant_woman,     min: 0,    max: 100),
+    _Field(key: 'safe_water_total_pct',        label: 'Safe Water Total % [0–100]',               rangeLabel: '0–100',   icon: Icons.water_drop,         min: 0,    max: 100),
+    _Field(key: 'safe_water_rural_pct',        label: 'Safe Water Rural % [0–100]',               rangeLabel: '0–100',   icon: Icons.water_drop,         min: 0,    max: 100),
+    _Field(key: 'safe_water_urban_pct',        label: 'Safe Water Urban % [0–100]',               rangeLabel: '0–100',   icon: Icons.water_drop,         min: 0,    max: 100),
+    _Field(key: 'safe_sanitation_total_pct',   label: 'Safe Sanitation Total % [0–100]',          rangeLabel: '0–100',   icon: Icons.clean_hands,        min: 0,    max: 100),
+    _Field(key: 'safe_sanitation_rural_pct',   label: 'Safe Sanitation Rural % [0–100]',          rangeLabel: '0–100',   icon: Icons.clean_hands,        min: 0,    max: 100),
+    _Field(key: 'safe_sanitation_urban_pct',   label: 'Safe Sanitation Urban % [0–100]',          rangeLabel: '0–100',   icon: Icons.clean_hands,        min: 0,    max: 100),
+    _Field(key: 'rural_population_pct',        label: 'Rural Population % [0–100]',               rangeLabel: '0–100',   icon: Icons.nature_people,      min: 0,    max: 100),
+    _Field(key: 'rural_population_growth',     label: 'Rural Population Growth %/yr [-10–10]',    rangeLabel: '-10–10',  icon: Icons.trending_up,        min: -10,  max: 10),
+    _Field(key: 'urban_population_pct',        label: 'Urban Population % [0–100]',               rangeLabel: '0–100',   icon: Icons.location_city,      min: 0,    max: 100),
+    _Field(key: 'urban_population_growth',     label: 'Urban Population Growth %/yr [-10–10]',    rangeLabel: '-10–10',  icon: Icons.trending_up,        min: -10,  max: 10),
+    _Field(key: 'basic_water_total_pct',       label: 'Basic Water Total % [0–100]',              rangeLabel: '0–100',   icon: Icons.opacity,            min: 0,    max: 100),
+    _Field(key: 'basic_water_rural_pct',       label: 'Basic Water Rural % [0–100]',              rangeLabel: '0–100',   icon: Icons.opacity,            min: 0,    max: 100),
+    _Field(key: 'basic_water_urban_pct',       label: 'Basic Water Urban % [0–100]',              rangeLabel: '0–100',   icon: Icons.opacity,            min: 0,    max: 100),
+    _Field(key: 'basic_sanitation_total_pct',  label: 'Basic Sanitation Total % [0–100]',         rangeLabel: '0–100',   icon: Icons.sanitizer,          min: 0,    max: 100),
+    _Field(key: 'basic_sanitation_rural_pct',  label: 'Basic Sanitation Rural % [0–100]',         rangeLabel: '0–100',   icon: Icons.sanitizer,          min: 0,    max: 100),
+    _Field(key: 'basic_sanitation_urban_pct',  label: 'Basic Sanitation Urban % [0–100]',         rangeLabel: '0–100',   icon: Icons.sanitizer,          min: 0,    max: 100),
+    _Field(key: 'latitude',                    label: 'Latitude [-35–38]',                        rangeLabel: '-35–38',  icon: Icons.explore,            min: -35,  max: 38),
+    _Field(key: 'longitude',                   label: 'Longitude [-18–52]',                       rangeLabel: '-18–52',  icon: Icons.explore,            min: -18,  max: 52),
+    _Field(key: 'geometry',                    label: 'Geometry (encoded) [0–53]',                rangeLabel: '0–53',    icon: Icons.map,                min: 0,    max: 53),
   ];
 
   static const List<(String, IconData, int, int)> _sections = [
@@ -105,6 +196,20 @@ class _PredictionPageState extends State<PredictionPage> {
     ('Basic Sanitation',    Icons.sanitizer,     20, 23),
     ('Geography',           Icons.map,           23, 26),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _applyPreset('Rwanda');
+  }
+
+  void _applyPreset(String country) {
+    final preset = _countryPresets[country]!;
+    for (final f in _fields) {
+      f.controller.text = preset[f.key] ?? '';
+    }
+    setState(() => _selectedCountry = country);
+  }
 
   String _riskLabel(double value) {
     if (value < 100) return 'Low Risk';
@@ -208,7 +313,6 @@ class _PredictionPageState extends State<PredictionPage> {
                     child: ListView(
                       padding: const EdgeInsets.fromLTRB(16, 20, 16, 32),
                       children: [
-                        // Result / Error cards (shown at top after prediction)
                         if (_resultValue != null) ...[
                           _buildResultCard(_resultValue!),
                           const SizedBox(height: 16),
@@ -218,7 +322,9 @@ class _PredictionPageState extends State<PredictionPage> {
                           const SizedBox(height: 16),
                         ],
 
-                        // Input sections
+                        _buildCountrySelector(),
+                        const SizedBox(height: 12),
+
                         for (final (title, icon, start, end) in _sections) ...[
                           _SectionCard(
                             title: title,
@@ -239,6 +345,94 @@ class _PredictionPageState extends State<PredictionPage> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildCountrySelector() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFF1B5E20), Color(0xFF2E7D32)],
+              ),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(16),
+                topRight: Radius.circular(16),
+              ),
+            ),
+            child: const Row(
+              children: [
+                Icon(Icons.tune, color: Colors.white, size: 18),
+                SizedBox(width: 8),
+                Text(
+                  'Country Preset',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    letterSpacing: 0.3,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Select a country to auto-fill all fields with typical values. You can still edit any field manually.',
+                  style: TextStyle(fontSize: 12, color: Colors.black54),
+                ),
+                const SizedBox(height: 10),
+                DropdownButtonFormField<String>(
+                  value: _selectedCountry,
+                  decoration: InputDecoration(
+                    prefixIcon: const Icon(Icons.flag, size: 18, color: Color(0xFF388E3C)),
+                    filled: true,
+                    fillColor: const Color(0xFFF9FBF9),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: Colors.grey.shade300),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: Colors.grey.shade300),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: const BorderSide(color: Color(0xFF388E3C), width: 1.5),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                  ),
+                  items: _countryPresets.keys
+                      .map((c) => DropdownMenuItem(value: c, child: Text(c)))
+                      .toList(),
+                  onChanged: (value) {
+                    if (value != null) _applyPreset(value);
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -307,8 +501,7 @@ class _PredictionPageState extends State<PredictionPage> {
               ),
               const Spacer(),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(20),
@@ -448,7 +641,6 @@ class _SectionCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Section header
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: const BoxDecoration(
@@ -476,7 +668,6 @@ class _SectionCard extends StatelessWidget {
               ],
             ),
           ),
-          // Fields
           Padding(
             padding: const EdgeInsets.fromLTRB(14, 14, 14, 10),
             child: Column(
@@ -500,12 +691,10 @@ class _SectionCard extends StatelessWidget {
           const TextInputType.numberWithOptions(signed: true, decimal: true),
       decoration: InputDecoration(
         labelText: f.label,
-        hintText: f.hint,
         prefixIcon: Icon(f.icon, size: 18, color: const Color(0xFF388E3C)),
         filled: true,
         fillColor: const Color(0xFFF9FBF9),
-        labelStyle: const TextStyle(fontSize: 12.5, color: Colors.black54),
-        hintStyle: const TextStyle(fontSize: 12, color: Colors.black38),
+        labelStyle: const TextStyle(fontSize: 12, color: Colors.black54),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: Colors.grey.shade300),
@@ -516,8 +705,7 @@ class _SectionCard extends StatelessWidget {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide:
-              const BorderSide(color: Color(0xFF388E3C), width: 1.5),
+          borderSide: const BorderSide(color: Color(0xFF388E3C), width: 1.5),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
