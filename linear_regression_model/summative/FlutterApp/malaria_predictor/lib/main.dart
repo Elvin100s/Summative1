@@ -403,7 +403,7 @@ class _PredictionPageState extends State<PredictionPage> {
                 ),
                 const SizedBox(height: 10),
                 DropdownButtonFormField<String>(
-                  value: _selectedCountry,
+                  initialValue: _selectedCountry,
                   decoration: InputDecoration(
                     prefixIcon: const Icon(Icons.flag, size: 18, color: Color(0xFF388E3C)),
                     filled: true,
