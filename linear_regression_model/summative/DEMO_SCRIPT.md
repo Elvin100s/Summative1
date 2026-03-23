@@ -2,94 +2,110 @@
 
 ---
 
+## OPENING (15 seconds)
+
+**Look directly at the camera.**
+
+Say:
+> "Malaria kills over 600,000 people every year — the majority in Africa.
+> This project uses machine learning to predict malaria incidence rates
+> across East and Central Africa, helping guide health resource allocation
+> and save lives. Let me show you how it works."
+
+---
+
 ## PART 1 — Flutter App on Phone (2.5 min)
 
 **Hold up your phone to the camera so it's clearly visible.**
 
 Say:
 > "This is my Flutter mobile app — the Malaria Incidence Predictor.
-> It's a native Android app built with Flutter.
-> The app connects to my deployed FastAPI backend to predict
-> malaria incidence per 1,000 population at risk."
+> It's a native Android app that connects to my deployed FastAPI backend
+> to predict malaria incidence per 1,000 population at risk."
 
 **Show the green header with the biotech icon and title.**
 
 Say:
-> "The app has one page as required — a prediction page.
-> At the top you can see the app title and the three countries
-> this model focuses on — Rwanda, Uganda, and Kenya."
+> "The app has exactly one page — a prediction page as required.
+> The design uses a green theme representing health and Africa."
 
-**Show the Country Preset dropdown at the top of the form.**
-
-Say:
-> "I added a country preset dropdown to make it easy to input data.
-> Instead of manually typing all 26 values, I can select a country
-> and all fields are automatically filled with real values for that country."
-
-**Select Rwanda — show fields filling automatically.**
+**Show the Country Preset dropdown.**
 
 Say:
-> "I'll select Rwanda — all 26 fields fill instantly with
-> real epidemiological data for Rwanda."
+> "I added a country preset dropdown for ease of use.
+> Instead of manually typing all 26 values,
+> I select a country and every field fills automatically
+> with real epidemiological data for that country."
+
+**Select Rwanda — show all fields filling instantly.**
+
+Say:
+> "I'll select Rwanda — all 26 fields fill instantly."
 
 **Slowly scroll down through each section card.**
 
 Say:
-> "The fields are organized into 8 sections —
+> "The 26 input fields are organized into 8 sections —
 > Country and Year, Disease Indicators, Water Services,
 > Sanitation, Population, and Geography.
-> Each field shows its label and the valid input range
-> so the user always knows what values are acceptable."
+> Every field shows its label and valid range
+> so the user always knows what's acceptable."
 
 **Pause on the Disease Indicators section.**
 
 Say:
-> "For example — Bed Net Usage, Fever Antimalarial Treatment,
-> and IPT in Pregnancy are key malaria intervention indicators."
+> "Disease Indicators include Bed Net Usage,
+> Fever Antimalarial Treatment, and IPT in Pregnancy —
+> these are the frontline malaria intervention metrics."
+
+**Pause on Water and Sanitation sections.**
+
+Say:
+> "Water and sanitation access are split into total, rural, and urban
+> because the model learned that these breakdowns
+> significantly affect malaria incidence."
 
 **Continue scrolling to Geography section.**
 
 Say:
-> "Geography fields include latitude, longitude, and
-> an encoded geometry identifier — all derived from the dataset."
+> "Geography captures latitude, longitude, and an encoded
+> geometry identifier — all features from the original dataset."
 
-**Scroll back to top and show the Predict button.**
-
-Say:
-> "At the bottom is the Predict button. I'll tap it now."
-
-**Tap Predict — wait for result.**
+**Scroll back up and tap Predict.**
 
 Say:
-> "The app sends all 26 values as a POST request to my API
-> and waits for the response."
+> "Now I'll hit Predict. The app packages all 26 values
+> into a JSON body and sends a POST request to my live API on Render."
 
-**Show the result card at the top.**
+**Wait for result — show result card.**
 
 Say:
-> "The result card appears showing the predicted incidence value
+> "The result card appears with the predicted incidence value
 > and a color-coded risk level.
-> Green means low risk — under 100 cases per 1,000.
+> Green is low risk — under 100 cases per 1,000.
 > Orange is moderate — 100 to 300.
-> Red is high — above 300."
+> Red is high — above 300.
+> This color coding makes the result immediately actionable."
 
-**Now switch to Uganda preset.**
-
-Say:
-> "I'll now switch to Uganda to show a different prediction."
-
-**Select Uganda — tap Predict — show new result.**
+**Switch to DRC preset — tap Predict.**
 
 Say:
-> "Uganda has higher malaria burden — notice the different
-> predicted value and potentially different risk level."
+> "Now I'll switch to DRC — the Democratic Republic of Congo —
+> which has one of the highest malaria burdens in Africa."
 
-**Point to the Flutter code briefly if screen recording laptop.**
+**Show the new result.**
 
 Say:
-> "The API call is made here in the _predict function —
-> it sends a JSON POST request to the deployed Render URL
-> and parses the response to display the result."
+> "Notice the significantly higher predicted value and risk level
+> compared to Rwanda — the model captures the real difference
+> in malaria burden between these countries."
+
+**Briefly show the Flutter code on your laptop screen.**
+
+Say:
+> "Here in the _predict function you can see the API call —
+> it sends a POST request to the deployed Render URL
+> with all 26 values and displays the response."
 
 ---
 
@@ -99,99 +115,106 @@ Say:
 
 Say:
 > "This is the Swagger UI — automatically generated by FastAPI.
-> It documents all my API endpoints and lets you test them directly."
+> It's publicly accessible and documents all API endpoints.
+> Anyone can test the API directly from here."
+
+**Point out the three endpoints.**
+
+Say:
+> "I have three endpoints — a health check, a predict endpoint,
+> and a retrain endpoint."
 
 **Click POST /predict → Try it out → Execute.**
 
 Say:
-> "I'll test the predict endpoint. The JSON body is pre-filled
-> with example values. I hit Execute and get back a 200 response
-> with the predicted incidence value."
-
-**Show the 200 response with the predicted value.**
-
-**Now change "year": 2015 to "year": 9999 and Execute.**
-
-Say:
-> "Now I'll test range validation. I set year to 9999
-> which is outside the allowed range of 2007 to 2017."
-
-**Show the 422 error response.**
-
-Say:
-> "The API returns a 422 error — Pydantic caught the invalid value
-> and tells us exactly what went wrong. This is the range constraint
-> enforcement built into the API."
-
-**Scroll down to POST /retrain and click it to expand.**
-
-Say:
-> "I also have a retrain endpoint. This allows the model to be
-> updated whenever new data is available — without redeploying."
-
-**Click "Try it out".**
-
-Say:
-> "I'll click Try it out to test it."
-
-**Click the file upload button (Choose File). Select DatasetAfricaMalaria.csv from your computer.**
-
-Say:
-> "I upload a CSV file with the same schema as the original dataset.
-> This is the Africa Malaria dataset I used for training."
-
-**Click Execute.**
-
-Say:
-> "I hit Execute — the API receives the CSV, runs the full
-> training pipeline, trains all three models — Linear Regression,
-> Decision Tree, and Random Forest — evaluates each one,
-> picks the best performing model by lowest MSE,
-> and saves it to replace the current model."
+> "I'll test the predict endpoint. The request body is pre-filled
+> with example values. I hit Execute."
 
 **Show the 200 response.**
 
 Say:
-> "The response shows a 200 success with the MSE for all three models.
-> Linear Regression: 0.69, Decision Tree: 0.34, Random Forest: 0.08.
-> Random Forest wins again and is saved as the active model.
-> From this point on, all predictions use the newly retrained model."
+> "200 response — the predicted incidence value comes back instantly.
+> This is the same endpoint my Flutter app calls."
 
-**Point out the message field in the response.**
+**Change year to 9999 → Execute.**
 
 Say:
-> "The message confirms — Model retrained and saved successfully.
-> This is how I handle model updates in deployment — no code changes,
-> no redeployment. Just upload new data and the system handles the rest."
+> "Now I'll test range validation — I'll set year to 9999,
+> which is outside the valid range of 2007 to 2017."
+
+**Show the 422 error.**
+
+Say:
+> "422 error — Pydantic rejected the value and tells us exactly why.
+> Input should be less than or equal to 2017.
+> Every single field has enforced data types and range constraints."
+
+**Scroll to POST /retrain → Try it out.**
+
+Say:
+> "Now the retrain endpoint — this is how I handle new data in production.
+> No redeployment, no code changes needed."
+
+**Upload DatasetAfricaMalaria.csv → Execute.**
+
+Say:
+> "I upload a CSV with the same schema as the training data.
+> The API runs the full training pipeline —
+> trains Linear Regression, Decision Tree, and Random Forest,
+> evaluates all three, picks the best by lowest MSE,
+> and saves it as the active model."
+
+**Show the 200 response with MSE values.**
+
+Say:
+> "The response confirms success and shows the MSE for all three models.
+> Linear Regression: 0.69, Decision Tree: 0.34, Random Forest: 0.08.
+> Random Forest wins — it's saved and all future predictions use it.
+> This is production-ready model deployment."
 
 ---
 
 ## PART 3 — Notebook (1 min)
 
-**Open multivariate.ipynb in Jupyter or VS Code.**
+**Open multivariate.ipynb.**
 
 Say:
-> "Here's the notebook where I built and trained the models."
+> "Here's the notebook — the heart of this project."
 
 **Scroll to the visualizations.**
 
 Say:
-> "I did exploratory data analysis — correlation heatmap and
-> feature distributions to understand which variables matter most."
+> "I started with EDA — a correlation heatmap to identify
+> which features are most strongly related to malaria incidence,
+> and distribution plots to understand the data shape
+> and decide which columns to keep or drop."
 
-**Scroll to the model training section.**
+**Scroll to preprocessing section.**
 
 Say:
-> "I trained three models — Linear Regression, Decision Tree,
-> and Random Forest — and compared them using MSE and R-squared."
+> "I label-encoded categorical columns, imputed missing values,
+> log-transformed skewed features, and standardized the data
+> using StandardScaler."
 
-**Show the loss curves and scatter plot.**
+**Scroll to model training and loss curves.**
+
+Say:
+> "I trained all three models and plotted loss curves
+> for both training and test data to detect overfitting."
+
+**Show the scatter plot.**
+
+Say:
+> "This scatter plot shows the linear regression line
+> fitted through the data after training."
 
 **Show the results table.**
 
 Say:
-> "Random Forest had the lowest MSE of 0.08 and R-squared of 0.98,
-> so it was saved as the best model."
+> "Random Forest achieved R-squared of 0.98 —
+> it explains 98% of the variance in malaria incidence.
+> Linear Regression was 84%, Decision Tree 92%.
+> Random Forest clearly outperformed and was saved as the best model."
 
 ---
 
@@ -200,40 +223,57 @@ Say:
 **Question 1: Is your loss high or low? What can you do to reduce it?**
 
 Say:
-> "My loss is low — R-squared of 0.98 means the model explains
-> 98% of the variance. To reduce it further I could collect more
-> data, add more relevant features like temperature or rainfall,
-> or do more hyperparameter tuning."
+> "My loss is very low — R-squared of 0.98 is excellent.
+> To reduce it further I could collect more recent data beyond 2017,
+> add climate features like rainfall and temperature
+> which are known malaria drivers,
+> or apply grid search to fine-tune hyperparameters further."
 
-**Question 2: Are there hyperparameters that can improve performance?**
-
-Say:
-> "Yes. For Random Forest, key hyperparameters are n_estimators
-> — the number of trees — and max_depth which controls how deep
-> each tree grows. I used 200 trees and max depth of 10.
-> Tuning these with grid search could improve performance further."
-
-**Question 3: What happens if you have new data?**
+**Question 2: Are there hyperparameters that can help improve performance?**
 
 Say:
-> "I handle this with the retrain endpoint. Anyone can upload
-> a new CSV through the API and it automatically retrains all
-> three models, picks the best one, and replaces the saved model.
-> No redeployment needed."
+> "Yes. For Random Forest the key hyperparameters are
+> n_estimators — the number of trees, I used 200 —
+> and max_depth which controls tree complexity, I used 10.
+> For Decision Tree it's max_depth and min_samples_split.
+> Grid search or random search cross-validation
+> could find an even better combination."
+
+**Question 3: What would happen if you had new data?**
+
+Say:
+> "I built a solution for this — the retrain endpoint.
+> Upload a new CSV to the API and it automatically
+> retrains all three models, selects the best performer,
+> and replaces the active model.
+> No downtime, no redeployment — the system updates itself."
 
 **Question 4: What was the basis of your CORS configuration?**
 
 Say:
-> "Instead of using a wildcard which allows all origins,
-> I specified only the origins that should have access —
-> localhost for development and the Android emulator address.
-> This follows security best practices by restricting
-> cross-origin access to known trusted sources only."
+> "I deliberately avoided the wildcard asterisk
+> which would allow any origin to call the API.
+> Instead I specified only trusted origins —
+> localhost for local development and the Android emulator address.
+> This follows security best practices —
+> you only allow what you explicitly trust."
+
+---
+
+## CLOSING (10 seconds)
+
+**Look at the camera.**
+
+Say:
+> "From a dataset of 54 African countries to a live mobile app —
+> this is machine learning solving a real problem.
+> Thank you."
 
 ---
 
 ## REMINDERS
 - Camera ON the entire time
+- Wake up the API first — open https://malaria-predictor-api.onrender.com before recording
 - Stay under 7 minutes
-- Do NOT spend time explaining challenges or backstory
-- Keep it demo-focused: show, click, explain briefly, move on
+- Do NOT spend time on challenges or backstory
+- Speak clearly and confidently — you built this
