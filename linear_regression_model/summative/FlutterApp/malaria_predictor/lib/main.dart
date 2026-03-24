@@ -618,6 +618,22 @@ class _PredictionPageState extends State<PredictionPage> {
             'cases per 1,000 population at risk',
             style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
           ),
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              '${(value / 10).toStringAsFixed(2)}% of population affected',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: color,
+              ),
+            ),
+          ),
         ],
       ),
     );
