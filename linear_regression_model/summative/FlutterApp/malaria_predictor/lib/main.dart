@@ -302,7 +302,7 @@ class _PredictionPageState extends State<PredictionPage> {
 
   Color _riskColor(double value) {
     if (value < 100) return const Color(0xFF2E7D32);
-    if (value < 300) return const Color(0xFFF57F17);
+    if (value < 200) return const Color(0xFFF57F17);
     return const Color(0xFFC62828);
   }
 
