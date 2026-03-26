@@ -239,7 +239,7 @@ class _PredictionPageState extends State<PredictionPage> {
   bool _loading = false;
   double? _resultValue;
   String? _error;
-  String _selectedCountry = 'Rwanda';
+  String? _selectedCountry;
 
   final List<_Field> _fields = [
     _Field(key: 'country_name',               label: 'Country Name (encoded) [0–53]',           rangeLabel: '0–53',    icon: Icons.flag,               min: 0,    max: 53),
@@ -284,7 +284,6 @@ class _PredictionPageState extends State<PredictionPage> {
   @override
   void initState() {
     super.initState();
-    _applyPreset('Rwanda');
   }
 
   void _applyPreset(String country) {
@@ -489,7 +488,8 @@ class _PredictionPageState extends State<PredictionPage> {
                 ),
                 const SizedBox(height: 10),
                 DropdownButtonFormField<String>(
-                  initialValue: _selectedCountry,
+                  value: _selectedCountry,
+                  hint: const Text('Select a country…'),
                   decoration: InputDecoration(
                     prefixIcon: const Icon(Icons.flag, size: 18, color: Color(0xFF388E3C)),
                     filled: true,

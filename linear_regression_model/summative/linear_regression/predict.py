@@ -52,18 +52,35 @@ def predict_malaria_incidence(input_dict):
 # Demo
 if __name__ == '__main__':
 
+    # Rwanda 2015 — matches the Flutter app preset
     sample = {
-        'Year': 2015,
-        'Country': 'Uganda',
-        'Use of insecticide-treated bed nets (% of under-5 population)': 42.0,
-        'Children with fever receiving antimalarial drugs (%)': 35.0,
-        'Hospital beds (per 1,000 people)': 0.5,
-        'Physicians (per 1,000 people)': 0.1,
-        'Immunization, DPT (% of children ages 12-23 months)': 78.0,
-        'Prevalence of HIV, total (% of population ages 15-49)': 6.5,
-        'Mortality rate, under-5 (per 1,000 live births)': 90.0,
-        'Life expectancy at birth, total (years)': 58.0,
+        'Country Name':                                                                          40,
+        'Year':                                                                                2015,
+        'Country Code':                                                                          40,
+        'Malaria cases reported':                                                           3500000,
+        'Use of insecticide-treated bed nets (% of under-5 population)':                      53.0,
+        'Children with fever receiving antimalarial drugs (% of children under age 5 with fever)': 38.0,
+        'Intermittent preventive treatment (IPT) of malaria in pregnancy (% of pregnant women)': 31.0,
+        'People using safely managed drinking water services (% of population)':              14.0,
+        'People using safely managed drinking water services, rural (% of rural population)':  8.0,
+        'People using safely managed drinking water services, urban (% of urban population)': 42.0,
+        'People using safely managed sanitation services (% of population)':                   6.0,
+        'People using safely managed sanitation services, rural (% of rural population)':      4.0,
+        'People using safely managed sanitation services, urban  (% of urban population)':    20.0,
+        'Rural population (% of total population)':                                           83.0,
+        'Rural population growth (annual %)':                                                  2.1,
+        'Urban population (% of total population)':                                           17.0,
+        'Urban population growth (annual %)':                                                  6.5,
+        'People using at least basic drinking water services (% of population)':              76.0,
+        'People using at least basic drinking water services, rural (% of rural population)': 70.0,
+        'People using at least basic drinking water services, urban (% of urban population)': 93.0,
+        'People using at least basic sanitation services (% of population)':                  49.0,
+        'People using at least basic sanitation services, rural (% of rural population)':     44.0,
+        'People using at least basic sanitation services, urban  (% of urban population)':    72.0,
+        'latitude':                                                                            -1.94,
+        'longitude':                                                                           29.87,
+        'geometry':                                                                              40,
     }
 
     prediction = predict_malaria_incidence(sample)
-    print(f'Predicted malaria incidence: {prediction:.2f} per 1,000 population at risk')
+    print(f'Rwanda 2015 — Predicted malaria incidence: {prediction:.2f} per 1,000 population at risk')
