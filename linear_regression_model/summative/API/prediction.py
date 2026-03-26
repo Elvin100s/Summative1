@@ -36,6 +36,7 @@ LR_DIR        = os.path.join(BASE_DIR, "..", "linear_regression")
 MODEL_PATH    = os.path.join(LR_DIR, "best_model.pkl")
 SCALER_PATH   = os.path.join(LR_DIR, "scaler.pkl")
 FEATURES_PATH = os.path.join(LR_DIR, "feature_names.pkl")
+LOG_COLS_PATH = os.path.join(LR_DIR, "log_transformed_cols.pkl")
 TARGET        = "Incidence of malaria (per 1,000 population at risk)"
 
 logging.basicConfig(level=logging.INFO)
@@ -69,12 +70,14 @@ def _train_and_save(df: pd.DataFrame) -> dict:
     imputer = SimpleImputer(strategy="median")
     df = pd.DataFrame(imputer.fit_transform(df), columns=df.columns)
 
-    # Log-transform skewed features
+    # Log-transform skewed features and record which ones
+    log_transformed_cols = []
     for col in df.columns:
         if col == TARGET:
             continue
         if abs(skew(df[col])) > 1.0:
             df[col] = np.log1p(df[col].clip(lower=0))
+            log_transformed_cols.append(col)
     df[TARGET] = np.log1p(df[TARGET].clip(lower=0))
 
     features = [c for c in df.columns if c != TARGET]
@@ -106,9 +109,10 @@ def _train_and_save(df: pd.DataFrame) -> dict:
     log.info(f"Best model: {best_name}")
 
     os.makedirs(LR_DIR, exist_ok=True)
-    joblib.dump(best_model, MODEL_PATH)
-    joblib.dump(scaler,     SCALER_PATH)
-    joblib.dump(features,   FEATURES_PATH)
+    joblib.dump(best_model,          MODEL_PATH)
+    joblib.dump(scaler,              SCALER_PATH)
+    joblib.dump(features,            FEATURES_PATH)
+    joblib.dump(log_transformed_cols, LOG_COLS_PATH)
 
     return {name: {"mse": v["mse"]} for name, v in results.items()}
 
@@ -118,7 +122,7 @@ LOCAL_CSV = os.path.join(BASE_DIR, "..", "linear_regression", "DatasetAfricaMala
 
 def _ensure_model():
     """Train model from local CSV (or Kaggle fallback) if pkl files are missing."""
-    if all(os.path.exists(p) for p in [MODEL_PATH, SCALER_PATH, FEATURES_PATH]):
+    if all(os.path.exists(p) for p in [MODEL_PATH, SCALER_PATH, FEATURES_PATH, LOG_COLS_PATH]):
         log.info("Model artifacts found — skipping training.")
         return
 
@@ -352,9 +356,12 @@ def _predict_from_dict(input_dict: dict) -> float:
     model    = joblib.load(MODEL_PATH)
     scaler   = joblib.load(SCALER_PATH)
     features = joblib.load(FEATURES_PATH)
+    log_cols = joblib.load(LOG_COLS_PATH)
 
     row = np.array([input_dict.get(f, 0.0) for f in features], dtype=float)
-    row = np.log1p(np.clip(row, 0, None))
+    for i, f in enumerate(features):
+        if f in log_cols:
+            row[i] = np.log1p(max(row[i], 0))
     scaled   = scaler.transform(row.reshape(1, -1))
     log_pred = model.predict(scaled)[0]
     return float(np.expm1(log_pred))
@@ -372,7 +379,7 @@ def health():
 @app.post("/predict", tags=["Prediction"])
 def predict(data: MalariaInput):
     """Predict malaria incidence (per 1,000 population at risk)."""
-    if not all(os.path.exists(p) for p in [MODEL_PATH, SCALER_PATH, FEATURES_PATH]):
+    if not all(os.path.exists(p) for p in [MODEL_PATH, SCALER_PATH, FEATURES_PATH, LOG_COLS_PATH]):
         raise HTTPException(status_code=503, detail="Model not ready. Try /retrain first.")
 
     # Build feature dict using full column names
