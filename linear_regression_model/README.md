@@ -54,6 +54,10 @@ flutter pub get
 flutter run
 ```
 
+## Demo Video
+
+https://www.youtube.com/watch?v=piQf1J3AkhI
+
 ## Setup
 
 ```bash
