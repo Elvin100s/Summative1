@@ -1,31 +1,73 @@
-# Python
+# ── Python ────────────────────────────────────────────────────────────────────
 __pycache__/
 *.py[cod]
 *.pyo
 .ipynb_checkpoints/
 
-# Virtual environments
+# ── Virtual environments ───────────────────────────────────────────────────────
 venv/
 .venv/
 env/
 
-# Environment & secrets
+# ── Secrets / credentials ─────────────────────────────────────────────────────
 .env
 .env.*
 kaggle.json
 
-# OS
+# ── ML artifacts ──────────────────────────────────────────────────────────────
+*.pkl
+
+# ── OS ────────────────────────────────────────────────────────────────────────
 .DS_Store
 Thumbs.db
 desktop.ini
 
-# IDE
+# ── IDE ───────────────────────────────────────────────────────────────────────
 .idea/
 .vscode/
+*.iml
+*.ipr
+*.iws
 *.swp
 *.swo
+.history
+.atom/
+.svn/
+.swiftpm/
 
-# Build / distribution
+# ── Build / distribution ──────────────────────────────────────────────────────
 dist/
 build/
 *.egg-info/
+
+# ── Flutter / Dart ────────────────────────────────────────────────────────────
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/coverage/
+*.class
+*.log
+.buildlog/
+migrate_working_dir/
+app.*.symbols
+app.*.map.json
+
+# ── Android ───────────────────────────────────────────────────────────────────
+**/android/.gradle/
+**/android/captures/
+**/android/gradlew
+**/android/gradlew.bat
+**/android/gradle-wrapper.jar
+**/android/local.properties
+**/android/GeneratedPluginRegistrant.java
+**/android/.cxx/
+**/android/app/debug/
+**/android/app/profile/
+**/android/app/release/
+key.properties
+**/*.keystore
+**/*.jks
