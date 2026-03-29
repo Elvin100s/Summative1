@@ -1,6 +1,6 @@
 # Malaria Incidence Prediction — ML Pipeline
 
-Predicts malaria incidence rates (cases per 1,000 population at risk) across 54 African countries using three regression models. The best model is served via a FastAPI REST API and consumed by a Flutter mobile app.
+**Mission:** Malaria remains one of the leading causes of death in sub-Saharan Africa. This project predicts malaria incidence rates (cases per 1,000 population at risk) across 54 African countries to support early intervention, resource allocation, and public health decision-making. The best-performing model is served via a FastAPI REST API and consumed by a Flutter mobile app.
 
 ## Dataset
 

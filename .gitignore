@@ -62,8 +62,9 @@ app.*.map.json
 **/android/gradlew
 **/android/gradlew.bat
 **/android/gradle-wrapper.jar
+**/gradle/wrapper/gradle-wrapper.jar
 **/android/local.properties
-**/android/GeneratedPluginRegistrant.java
+**/GeneratedPluginRegistrant.java
 **/android/.cxx/
 **/android/app/debug/
 **/android/app/profile/
